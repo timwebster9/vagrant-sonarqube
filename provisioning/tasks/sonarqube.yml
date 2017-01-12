@@ -23,6 +23,7 @@
    - mysql-server
    - unzip
    - python-mysqldb
+   - htop
 
 - name: download and install sonarqube
   unarchive:
