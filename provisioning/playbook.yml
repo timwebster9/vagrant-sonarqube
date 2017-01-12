@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    http_port: 80
+    home: "/home/vagrant"
+  remote_user: root
+  gather_facts: no
+  pre_tasks:
+#    - name: update system
+#      shell: apt update && apt upgrade -y
+    - include: tasks/sonarqube.yml

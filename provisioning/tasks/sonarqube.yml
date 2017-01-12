@@ -1,0 +1,65 @@
+- name: create sonarqube group
+  group:
+    name: sonarqube
+
+- name: create sonarqube user
+  user:
+    name: sonarqube
+    group: sonarqube
+    password: $6$CXZnWcfudzLfba$SJmBRJ21lppLTTOXfNJ7Qnwmx8wsGiWGB5sTRqnldgZlqhu6uLoZX9GYG4yBRjgY5N.ilfn7.iKGAZtw4rr/s1
+
+- name: create sonarqube installation directory
+  file:
+    path: /opt/sonarqube
+    state: directory
+    mode: 0755
+    owner: sonarqube
+    group: sonarqube
+
+- name: install required packages
+  apt: name="{{ item }}" state=present
+  with_items:
+   - openjdk-8-jre-headless
+   - mysql-server
+   - unzip
+   - python-mysqldb
+
+- name: download and install sonarqube
+  unarchive:
+    src: https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-6.2.zip
+    dest: /opt/sonarqube
+    owner: sonarqube
+    group: sonarqube
+    remote_src: True
+
+- name: copy sonarqube configuration
+  copy:
+    src: ../files/sonar.properties
+    dest: /opt/sonarqube/sonarqube-6.2/conf/sonar.properties
+    owner: sonarqube
+    group: sonarqube
+
+- name: copy sonarqube systemd unit file
+  copy:
+    src: ../files/sonarqube.service
+    dest: /etc/systemd/system/sonarqube.service
+    owner: root
+    group: root
+
+- name: add sonar DB
+  mysql_db:
+    name: sonar
+    state: present
+
+- name: add sonar DB user
+  mysql_user:
+    name: sonar
+    password: sonar
+    priv: 'sonar.*:ALL'
+    state: present
+
+- name: enable and start the systemd service
+  systemd:
+    name: sonarqube
+    enabled: yes
+    state: started
