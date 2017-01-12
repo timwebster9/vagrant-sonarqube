@@ -1,0 +1,12 @@
+- name: add sonar DB
+  mysql_db:
+    name: sonar
+    state: present
+
+- name: add sonar DB user
+  mysql_user:
+    name: sonar
+    password: sonar
+    priv: 'sonar.*:ALL'
+    state: present
+    

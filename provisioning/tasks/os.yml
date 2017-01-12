@@ -1,0 +1,30 @@
+- name: create sonarqube group
+  group:
+    name: sonarqube
+
+- name: create sonarqube user
+  user:
+    name: sonarqube
+    group: sonarqube
+    password: $6$CXZnWcfudzLfba$SJmBRJ21lppLTTOXfNJ7Qnwmx8wsGiWGB5sTRqnldgZlqhu6uLoZX9GYG4yBRjgY5N.ilfn7.iKGAZtw4rr/s1
+
+- name: create sonarqube installation directory
+  file:
+    path: /opt/sonarqube
+    state: directory
+    mode: 0755
+    owner: sonarqube
+    group: sonarqube
+
+- name: update APT cache
+  apt:
+    update_cache: yes
+
+- name: install required packages
+  apt: name="{{ item }}" state=present
+  with_items:
+   - openjdk-8-jre-headless
+   - mysql-server
+   - unzip
+   - python-mysqldb
+   - htop

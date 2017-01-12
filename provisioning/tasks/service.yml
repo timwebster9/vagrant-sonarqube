@@ -1,0 +1,13 @@
+- name: copy sonarqube systemd unit file
+  copy:
+    src: ../files/sonarqube.service
+    dest: /etc/systemd/system/sonarqube.service
+    owner: root
+    group: root
+
+- name: enable and start the systemd service
+  systemd:
+    name: sonarqube
+    enabled: yes
+    state: started
+    
